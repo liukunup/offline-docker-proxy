@@ -1,0 +1,38 @@
+name: Run Python Script
+
+on: [push]
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Pull Docker image
+      run: docker pull docker.io/jenkins/jenkins:lts
+ 
+    - name: Save Docker image as tarball
+      run: |
+        mkdir -p images
+        docker save -o images/jenkins.tar docker.io/jenkins/jenkins:lts
+ 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run Python script
+      run: python src/qiniu_uploader.py --ak ${{ secrets.QINIU_OSS_AK }} --sk ${{ secrets.QINIU_OSS_SK }} --bucket ${{ secrets.QINIU_OSS_BUCKET }} --image images/jenkins.tar
