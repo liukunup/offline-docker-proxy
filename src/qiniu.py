@@ -19,6 +19,7 @@ class QiniuHandler(AbstractObjectStorageHandler):
         self.client = Auth(self.access_key, self.secret_key)
 
     def upload(self, localfile):
+        print(f'Uploading {localfile} to {self.bucket} ...')
         if not os.path.exists(localfile):
             raise FileNotFoundError(f'File not found: {localfile}')
         if self.client:
@@ -27,6 +28,7 @@ class QiniuHandler(AbstractObjectStorageHandler):
             # 生成上传 Token，可以指定过期时间等
             token = self.client.upload_token(self.bucket, key, 3600)
             ret, info = put_file(token, key, localfile, version='v2')
+            print(ret, info)
             return info
         else:
             raise Exception("You need to create a client first!")
