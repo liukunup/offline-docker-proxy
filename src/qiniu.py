@@ -27,8 +27,6 @@ class QiniuHandler(AbstractObjectStorageHandler):
             # 生成上传 Token，可以指定过期时间等
             token = self.client.upload_token(self.bucket, key, 3600)
             ret, info = put_file(token, key, localfile, version='v2')
-            assert ret['key'] == key
-            assert ret['hash'] == etag(localfile)
             return info
         else:
             raise Exception("You need to create a client first!")
@@ -37,4 +35,4 @@ class QiniuHandler(AbstractObjectStorageHandler):
         base_url = 'https://%s.%s/%s' % (self.bucket, self.domain, key)
         private_url = self.client.private_download_url(base_url, expires=3600)
         r = requests.get(private_url)
-        assert r.status_code == 200
+        return r.content
