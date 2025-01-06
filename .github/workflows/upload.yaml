@@ -35,4 +35,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Run Python script
-      run: python src/qiniu_uploader.py --ak ${{ secrets.QINIU_OSS_AK }} --sk ${{ secrets.QINIU_OSS_SK }} --bucket ${{ secrets.QINIU_OSS_BUCKET }} --image images/jenkins.tar
+      run: python main.py --ak ${{ secrets.QINIU_OSS_AK }} --sk ${{ secrets.QINIU_OSS_SK }} --bucket ${{ secrets.QINIU_OSS_BUCKET }} --image images/jenkins.tar
